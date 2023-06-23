@@ -26,7 +26,7 @@ for camera_name in range(5):
     pp.pprint(camera_info)
 
 tmp_dir = os.path.join(tempfile.gettempdir(), "airsim_cv_mode")
-print ("Saving images to %s" % tmp_dir)
+print(f"Saving images to {tmp_dir}")
 try:
     os.makedirs(tmp_dir)
 except OSError:
@@ -47,13 +47,18 @@ for x in range(3): # do few times
         airsim.ImageRequest("4", airsim.ImageType.SurfaceNormals)])
 
     for i, response in enumerate(responses):
-        filename = os.path.join(tmp_dir, str(x) + "_" + str(i))
+        filename = os.path.join(tmp_dir, f"{str(x)}_{str(i)}")
         if response.pixels_as_float:
             print("Type %d, size %d, pos %s" % (response.image_type, len(response.image_data_float), pprint.pformat(response.camera_position)))
-            airsim.write_pfm(os.path.normpath(filename + '.pfm'), airsim.get_pfm_array(response))
+            airsim.write_pfm(
+                os.path.normpath(f'{filename}.pfm'),
+                airsim.get_pfm_array(response),
+            )
         else:
             print("Type %d, size %d, pos %s" % (response.image_type, len(response.image_data_uint8), pprint.pformat(response.camera_position)))
-            airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)
+            airsim.write_file(
+                os.path.normpath(f'{filename}.png'), response.image_data_uint8
+            )
 
     pose = client.simGetVehiclePose()
     pp.pprint(pose)

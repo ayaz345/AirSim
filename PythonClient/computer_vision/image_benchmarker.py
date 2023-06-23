@@ -28,15 +28,17 @@ def saveImage(response, filename):
         depth = depth.reshape((response.height, response.width, -1))
         depth = np.array(depth * 255, dtype=np.uint8)
         # save pic
-        cv2.imwrite(os.path.normpath(filename + '.png'), depth)
+        cv2.imwrite(os.path.normpath(f'{filename}.png'), depth)
 
     elif response.compress: #png format
-        airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)
+        airsim.write_file(
+            os.path.normpath(f'{filename}.png'), response.image_data_uint8
+        )
 
     else: #uncompressed array
         img1d = np.fromstring(response.image_data_uint8, dtype=np.uint8) # get numpy array
         img_rgb = img1d.reshape(response.height, response.width, 3) # reshape array to 3 channel image array H X W X 3
-        cv2.imwrite(os.path.normpath(filename + '.png'), img_rgb) # write to png
+        cv2.imwrite(os.path.normpath(f'{filename}.png'), img_rgb)
 
 class ImageBenchmarker():
     def __init__(self,

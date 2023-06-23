@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import os
 import pprint
-import setup_path 
+import setup_path
 import tempfile
 
 # Use below in settings.json with Blocks environment
@@ -44,10 +44,10 @@ f2.join()
 
 state1 = client.getMultirotorState(vehicle_name="Drone1")
 s = pprint.pformat(state1)
-print("state: %s" % s)
+print(f"state: {s}")
 state2 = client.getMultirotorState(vehicle_name="Drone2")
 s = pprint.pformat(state2)
-print("state: %s" % s)
+print(f"state: {s}")
 
 airsim.wait_key('Press any key to move vehicles')
 f1 = client.moveToPositionAsync(-5, 5, -10, 5, vehicle_name="Drone1")
@@ -67,7 +67,7 @@ responses2 = client.simGetImages([
 print('Drone2: Retrieved images: %d' % len(responses2))
 
 tmp_dir = os.path.join(tempfile.gettempdir(), "airsim_drone")
-print ("Saving images to %s" % tmp_dir)
+print(f"Saving images to {tmp_dir}")
 try:
     os.makedirs(tmp_dir)
 except OSError:
@@ -80,15 +80,19 @@ for idx, response in enumerate(responses1 + responses2):
 
     if response.pixels_as_float:
         print("Type %d, size %d" % (response.image_type, len(response.image_data_float)))
-        airsim.write_pfm(os.path.normpath(filename + '.pfm'), airsim.get_pfm_array(response))
+        airsim.write_pfm(
+            os.path.normpath(f'{filename}.pfm'), airsim.get_pfm_array(response)
+        )
     elif response.compress: #png format
         print("Type %d, size %d" % (response.image_type, len(response.image_data_uint8)))
-        airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)
+        airsim.write_file(
+            os.path.normpath(f'{filename}.png'), response.image_data_uint8
+        )
     else: #uncompressed array
         print("Type %d, size %d" % (response.image_type, len(response.image_data_uint8)))
         img1d = np.fromstring(response.image_data_uint8, dtype=np.uint8) #get numpy array
         img_rgb = img1d.reshape(response.height, response.width, 3) #reshape array to 3 channel image array H X W X 3
-        cv2.imwrite(os.path.normpath(filename + '.png'), img_rgb) # write to png
+        cv2.imwrite(os.path.normpath(f'{filename}.png'), img_rgb)
 
 airsim.wait_key('Press any key to reset to original state')
 

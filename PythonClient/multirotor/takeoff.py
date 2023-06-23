@@ -3,14 +3,7 @@ import airsim
 import sys
 import time
 
-# For high speed ascent and descent on PX4 you may need to set these properties:
-# param set MPC_Z_VEL_MAX_UP 5
-# param set MPC_Z_VEL_MAX_DN 5
-
-z = 5
-if len(sys.argv) > 1:
-    z = float(sys.argv[1])
-
+z = float(sys.argv[1]) if len(sys.argv) > 1 else 5
 client = airsim.MultirotorClient()
 client.confirmConnection()
 client.enableApiControl(True)
@@ -25,7 +18,7 @@ else:
     print("already flying...")
     client.hoverAsync().join()
 
-print("make sure we are hovering at {} meters...".format(z))
+print(f"make sure we are hovering at {z} meters...")
 
 if z > 5:
     # AirSim uses NED coordinates so negative axis is up.

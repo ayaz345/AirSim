@@ -31,7 +31,7 @@ class TimeOfDayTest:
             if (i % 2 == 0):
                 enabled = True
 
-            self.setTimeOfDay(enabled, "2018-11-27 {}:00:00".format(8+ (i * 2)))
+            self.setTimeOfDay(enabled, f"2018-11-27 {8 + i * 2}:00:00")
 
             # go forward
             self.car_controls.throttle = 0.5
@@ -48,12 +48,12 @@ class TimeOfDayTest:
             time.sleep(3)   # let car drive a bit
 
     def setTimeOfDay(self, enabled, time_of_day):
-            if (enabled):
-                airsim.wait_key('Press any key to change time of day to [{}]'.format(time_of_day))
-                self.client.simSetTimeOfDay(enabled, time_of_day)
-            else:
-                airsim.wait_key('Press any key to change time of day to default time')
-                self.client.simSetTimeOfDay(enabled)
+        if enabled:
+            airsim.wait_key(f'Press any key to change time of day to [{time_of_day}]')
+            self.client.simSetTimeOfDay(enabled, time_of_day)
+        else:
+            airsim.wait_key('Press any key to change time of day to default time')
+            self.client.simSetTimeOfDay(enabled)
 
     def stop(self):
 

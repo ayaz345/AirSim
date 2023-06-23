@@ -71,12 +71,9 @@ class LidarTest:
             while True:
                 for lidar_name in lidar_names:
                     filename = f"{vehicle_name}_{lidar_name}_pointcloud.asc"
-                    if not existing_data_cleared:
-                        f = open(filename,'w')
-                    else:
-                        f = open(filename,'a')
+                    f = open(filename,'w') if not existing_data_cleared else open(filename,'a')
                     lidar_data = self.client.getLidarData(lidar_name=lidar_name,vehicle_name=vehicle_name)
-                    
+
                     orientation = lidar_data.pose.orientation
                     q0, q1, q2, q3 = orientation.w_val, orientation.x_val, orientation.y_val, orientation.z_val
                     rotation_matrix = np.array(([1-2*(q2*q2+q3*q3),2*(q1*q2-q3*q0),2*(q1*q3+q2*q0)],

@@ -7,7 +7,7 @@ client = airsim.VehicleClient()
 client.confirmConnection()
 
 tmp_dir = os.path.join(tempfile.gettempdir(), "airsim_cv_mode")
-print ("Saving images to %s" % tmp_dir)
+print(f"Saving images to {tmp_dir}")
 try:
     os.makedirs(tmp_dir)
 except OSError:
@@ -29,13 +29,18 @@ requests = [airsim.ImageRequest(CAM_NAME, airsim.ImageType.Scene),
 
 def save_images(responses, prefix = ""):
     for i, response in enumerate(responses):
-        filename = os.path.join(tmp_dir, prefix + "_" + str(i))
+        filename = os.path.join(tmp_dir, f"{prefix}_{str(i)}")
         if response.pixels_as_float:
             print(f"Type {response.image_type}, size {len(response.image_data_float)}, pos {response.camera_position}")
-            airsim.write_pfm(os.path.normpath(filename + '.pfm'), airsim.get_pfm_array(response))
+            airsim.write_pfm(
+                os.path.normpath(f'{filename}.pfm'),
+                airsim.get_pfm_array(response),
+            )
         else:
             print(f"Type {response.image_type}, size {len(response.image_data_uint8)}, pos {response.camera_position}")
-            airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)
+            airsim.write_file(
+                os.path.normpath(f'{filename}.png'), response.image_data_uint8
+            )
 
 
 responses = client.simGetImages(requests)

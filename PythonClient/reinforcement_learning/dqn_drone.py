@@ -56,14 +56,12 @@ eval_callback = EvalCallback(
 )
 callbacks.append(eval_callback)
 
-kwargs = {}
-kwargs["callback"] = callbacks
-
+kwargs = {"callback": callbacks}
 # Train for a certain number of timesteps
 model.learn(
     total_timesteps=5e5,
-    tb_log_name="dqn_airsim_drone_run_" + str(time.time()),
-    **kwargs
+    tb_log_name=f"dqn_airsim_drone_run_{str(time.time())}",
+    **kwargs,
 )
 
 # Save policy weights

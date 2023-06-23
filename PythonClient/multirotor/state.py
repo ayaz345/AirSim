@@ -5,7 +5,7 @@ import pprint
 def print_state():
     print("===============================================================")
     state = client.getMultirotorState()
-    print("state: %s" % pprint.pformat(state))
+    print(f"state: {pprint.pformat(state)}")
     return state
 
 

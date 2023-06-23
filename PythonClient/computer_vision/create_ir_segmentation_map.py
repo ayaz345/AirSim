@@ -94,14 +94,15 @@ def get_new_temp_emiss_from_radiance(tempEmissivity, response):
 
     L = radiance(tempEmissivity[:,1].reshape((-1,1)).astype(numpy.float64), 
                  tempEmissivity[:,2].reshape((-1,1)).astype(numpy.float64), 
-                 response=response)[1].flatten() 
+                 response=response)[1].flatten()
     L = ((L / L.max()) * 255).astype(numpy.uint8)
 
-    tempEmissivityNew = numpy.hstack((
-        tempEmissivity[:,0].reshape((numObjects,1)), 
-        L.reshape((numObjects,1))))
-
-    return tempEmissivityNew
+    return numpy.hstack(
+        (
+            tempEmissivity[:, 0].reshape((numObjects, 1)),
+            L.reshape((numObjects, 1)),
+        )
+    )
 
 def set_segmentation_ids(segIdDict, tempEmissivityNew, client):
     """
@@ -152,7 +153,7 @@ if __name__ == '__main__':
     #Connect to AirSim, UAV mode.
     client = MultirotorClient()
     client.confirmConnection()
-    
+
     segIdDict = {'Base_Terrain':'soil',
                  'elephant':'elephant',
                  'zebra':'zebra',
@@ -163,7 +164,7 @@ if __name__ == '__main__':
                  'InstancedFoliageActor':'tree',
                  'Water_Plane':'water',
                  'truck':'truck'}
-    
+
     #Choose temperature values for winter or summer.
     #"""
     #winter
@@ -200,9 +201,9 @@ if __name__ == '__main__':
     response = None
     camResponseFile = 'camera_response.npy'
     try:
-      numpy.load(camResponseFile)
+        numpy.load(camResponseFile)
     except:
-      print("{} not found. Using default response.".format(camResponseFile))
+        print(f"{camResponseFile} not found. Using default response.")
 
     #Calculate radiance.
     tempEmissivityNew = get_new_temp_emiss_from_radiance(tempEmissivity, 

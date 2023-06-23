@@ -76,7 +76,7 @@ def splitTrainValidationAndTestData(all_data_mappings, split_ratio=(0.7, 0.2, 0.
     train_split = int(len(all_data_mappings) * split_ratio[0])
     val_split = train_split + int(len(all_data_mappings) * split_ratio[1])
 
-    train_data_mappings = all_data_mappings[0:train_split]
+    train_data_mappings = all_data_mappings[:train_split]
     validation_data_mappings = all_data_mappings[train_split:val_split]
     test_data_mappings = all_data_mappings[val_split:]
 
@@ -211,14 +211,14 @@ def cook(folders, output_directory, train_eval_test_split, chunk_size):
                 train_eval_test_split: dataset split ratio
     """
     output_files = [os.path.join(output_directory, f) for f in ['train.h5', 'eval.h5', 'test.h5']]
-    if (any([os.path.isfile(f) for f in output_files])):
-       print("Preprocessed data already exists at: {0}. Skipping preprocessing.".format(output_directory))
+    if any(os.path.isfile(f) for f in output_files):
+        print("Preprocessed data already exists at: {0}. Skipping preprocessing.".format(output_directory))
 
     else:
         all_data_mappings = generateDataMapAirSim(folders)
-        
+
         split_mappings = splitTrainValidationAndTestData(all_data_mappings, split_ratio=train_eval_test_split)
-        
+
         for i in range(0, len(split_mappings)-1, 1):
             print('Processing {0}...'.format(output_files[i]))
             saveH5pyData(split_mappings[i], output_files[i], chunk_size)

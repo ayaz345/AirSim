@@ -2,7 +2,7 @@ import airsim
 import cv2
 import numpy as np
 import os
-import setup_path 
+import setup_path
 import time
 
 # Use below in settings.json with blocks environment
@@ -62,7 +62,7 @@ for idx in range(3):
     car_controls1.steering = -0.5
     client.setCarControls(car_controls1, "Car1")
     print("Car1: Go reverse, steer right")
-    car_controls1.is_manual_gear = False; # change back gear to auto
+    car_controls1.is_manual_gear = False
     car_controls1.manual_gear = 0  
 
     car_controls2.throttle = -0.5
@@ -71,8 +71,8 @@ for idx in range(3):
     car_controls2.steering = 0.5
     client.setCarControls(car_controls2, "Car2")
     print("Car2: Go reverse, steer right")
-    car_controls2.is_manual_gear = False; # change back gear to auto
-    car_controls2.manual_gear = 0  
+    car_controls2.is_manual_gear = False
+    car_controls2.manual_gear = 0
     time.sleep(3)   # let car drive a bit
 
 
@@ -87,7 +87,7 @@ for idx in range(3):
     print("Car2: Apply break")
     car_controls2.brake = 0 #remove break
     time.sleep(3)   # let car drive a bit
-    
+
     # get camera images from the car
     responses1 = client.simGetImages([
         airsim.ImageRequest("0", airsim.ImageType.DepthVis),  #depth visualization image
@@ -98,20 +98,25 @@ for idx in range(3):
         airsim.ImageRequest("1", airsim.ImageType.Scene, False, False)], "Car2")  #scene vision image in uncompressed RGB array
     print('Car2: Retrieved images: %d' % (len(responses2)))
 
-    for response in responses1 + responses2:
-        filename = 'c:/temp/car_multi_py' + str(idx)
+    filename = f'c:/temp/car_multi_py{str(idx)}'
 
+    for response in responses1 + responses2:
         if response.pixels_as_float:
             print("Type %d, size %d" % (response.image_type, len(response.image_data_float)))
-            airsim.write_pfm(os.path.normpath(filename + '.pfm'), airsim.get_pfm_array(response))
+            airsim.write_pfm(
+                os.path.normpath(f'{filename}.pfm'),
+                airsim.get_pfm_array(response),
+            )
         elif response.compress: #png format
             print("Type %d, size %d" % (response.image_type, len(response.image_data_uint8)))
-            airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)
+            airsim.write_file(
+                os.path.normpath(f'{filename}.png'), response.image_data_uint8
+            )
         else: #uncompressed array
             print("Type %d, size %d" % (response.image_type, len(response.image_data_uint8)))
             img1d = np.fromstring(response.image_data_uint8, dtype=np.uint8) # get numpy array
             img_rgb = img1d.reshape(response.height, response.width, 3) # reshape array to 3 channel image array H X W X 3
-            cv2.imwrite(os.path.normpath(filename + '.png'), img_rgb) # write to png
+            cv2.imwrite(os.path.normpath(f'{filename}.png'), img_rgb)
 
 #restore to original state
 client.reset()

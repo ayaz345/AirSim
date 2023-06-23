@@ -43,7 +43,7 @@ print('Retrieved images: %d', len(responses))
 
 #save segmentation images in various formats
 for idx, response in enumerate(responses):
-    filename = 'c:/temp/py_seg_' + str(idx)
+    filename = f'c:/temp/py_seg_{str(idx)}'
 
     if response.pixels_as_float:
         print("Type %d, size %d" % (response.image_type, len(response.image_data_float)))

@@ -145,8 +145,7 @@ class VehicleClient:
         server_min_ver = self.getMinRequiredServerVersion()
         client_min_ver = self.getMinRequiredClientVersion()
 
-        ver_info = "Client Ver:" + str(client_ver) + " (Min Req: " + str(client_min_ver) + \
-              "), Server Ver:" + str(server_ver) + " (Min Req: " + str(server_min_ver) + ")"
+        ver_info = f"Client Ver:{str(client_ver)} (Min Req: {str(client_min_ver)}), Server Ver:{str(server_ver)} (Min Req: {str(server_min_ver)})"
 
         if server_ver < server_min_ver:
             print(ver_info, file=sys.stderr)
@@ -285,9 +284,7 @@ class VehicleClient:
 
 #because this method returns std::vector < uint8>, msgpack decides to encode it as a string unfortunately.
         result = self.client.call('simGetImage', camera_name, image_type, vehicle_name, external)
-        if (result == "" or result == "\0"):
-            return None
-        return result
+        return None if result in ["", "\0"] else result
 
 #camera control
 #simGetImage returns compressed png in array of bytes
@@ -314,33 +311,25 @@ class VehicleClient:
 #CinemAirSim
     def simGetPresetLensSettings(self, camera_name, vehicle_name = '', external = False):  
         result = self.client.call('simGetPresetLensSettings', camera_name, vehicle_name, external)
-        if (result == "" or result == "\0"):
-            return None
-        return result
+        return None if result in ["", "\0"] else result
 
     def simGetLensSettings(self, camera_name, vehicle_name = '', external = False):  
         result = self.client.call('simGetLensSettings', camera_name, vehicle_name, external)
-        if (result == "" or result == "\0"):
-            return None
-        return result
+        return None if result in ["", "\0"] else result
 
     def simSetPresetLensSettings(self, preset_lens_settings, camera_name, vehicle_name = '', external = False):  
         self.client.call("simSetPresetLensSettings", preset_lens_settings, camera_name, vehicle_name, external)
 
     def simGetPresetFilmbackSettings(self, camera_name, vehicle_name = '', external = False):  
         result = self.client.call('simGetPresetFilmbackSettings', camera_name, vehicle_name, external)
-        if (result == "" or result == "\0"):
-            return None
-        return result
+        return None if result in ["", "\0"] else result
 
     def simSetPresetFilmbackSettings(self, preset_filmback_settings, camera_name, vehicle_name = '', external = False):  
         self.client.call("simSetPresetFilmbackSettings", preset_filmback_settings, camera_name, vehicle_name, external)
 
     def simGetFilmbackSettings(self, camera_name, vehicle_name = '', external = False):  
         result = self.client.call('simGetFilmbackSettings', camera_name, vehicle_name, external)
-        if (result == "" or result == "\0"):
-            return None
-        return result
+        return None if result in ["", "\0"] else result
 
     def simSetFilmbackSettings(self, sensor_width, sensor_height, camera_name, vehicle_name = '', external = False):  
         return self.client.call("simSetFilmbackSettings", sensor_width, sensor_height, camera_name, vehicle_name, external)

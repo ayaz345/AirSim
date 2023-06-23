@@ -46,26 +46,26 @@ def project_3d_point_to_screen(subjectXYZ, camXYZ, camQuaternion, camProjMatrix4
 
     #Convert the camera's quaternion rotation to yaw, pitch, roll angles.
     pitchRollYaw = utils.to_eularian_angles(camQuaternion)
-    
+
     #Create a rotation matrix from camera pitch, roll, and yaw angles.
     camRotation = rotation_matrix_from_angles(pitchRollYaw)
-    
+
     #Change coordinates to get subjectXYZ in the camera's local coordinate system.
     XYZW = numpy.transpose([subjectXYZ])
     XYZW = numpy.add(XYZW, -camPosition)
-    print("XYZW: " + str(XYZW))
+    print(f"XYZW: {str(XYZW)}")
     XYZW = numpy.matmul(numpy.transpose(camRotation), XYZW)
-    print("XYZW derot: " + str(XYZW))
-    
+    print(f"XYZW derot: {str(XYZW)}")
+
     #Recreate the perspective projection of the camera.
-    XYZW = numpy.concatenate([XYZW, [[1]]])    
+    XYZW = numpy.concatenate([XYZW, [[1]]])
     XYZW = numpy.matmul(camProjMatrix4x4, XYZW)
     XYZW = XYZW / XYZW[3]
-    
+
     #Move origin to the upper-left corner of the screen and multiply by size to get pixel values. Note that screen is in y,-z plane.
     normX = (1 - XYZW[0]) / 2
     normY = (1 + XYZW[1]) / 2
-    
+
     return numpy.array([
         imageWidthHeight[0] * normX,
         imageWidthHeight[1] * normY
@@ -200,10 +200,9 @@ def main(client,
             scene = cv2.merge((b,g,r))
 
             if writeIR:
-                cv2.imwrite(irFolder+'ir_'+str(i).zfill(5)+'.png', ir)
+                cv2.imwrite(f'{irFolder}ir_{str(i).zfill(5)}.png', ir)
             if writeScene:
-                cv2.imwrite(sceneFolder+'scene_'+str(i).zfill(5)+'.png', 
-                            scene)
+                cv2.imwrite(f'{sceneFolder}scene_{str(i).zfill(5)}.png', scene)
 
             i += 1
             elapsedTime = time.time() - startTime

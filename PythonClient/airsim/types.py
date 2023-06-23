@@ -6,7 +6,7 @@ import math
 class MsgpackMixin:
     def __repr__(self):
         from pprint import pformat
-        return "<" + type(self).__name__ + "> " + pformat(vars(self), indent=4, width=1)
+        return f"<{type(self).__name__}> {pformat(vars(self), indent=4, width=1)}"
 
     def to_msgpack(self, *args, **kwargs):
         return self.__dict__
@@ -23,23 +23,23 @@ class _ImageType(type):
     @property
     def Scene(cls):
         return 0
-    def DepthPlanar(cls):
+    def DepthPlanar(self):
         return 1
-    def DepthPerspective(cls):
+    def DepthPerspective(self):
         return 2
-    def DepthVis(cls):
+    def DepthVis(self):
         return 3
-    def DisparityNormalized(cls):
+    def DisparityNormalized(self):
         return 4
-    def Segmentation(cls):
+    def Segmentation(self):
         return 5
-    def SurfaceNormals(cls):
+    def SurfaceNormals(self):
         return 6
-    def Infrared(cls):
+    def Infrared(self):
         return 7
-    def OpticalFlow(cls):
+    def OpticalFlow(self):
         return 8
-    def OpticalFlowVis(cls):
+    def OpticalFlowVis(self):
         return 9
 
     def __getattr__(self, key):
@@ -113,13 +113,17 @@ class Vector3r(MsgpackMixin):
         if type(other) in [int, float] + np.sctypes['int'] + np.sctypes['uint'] + np.sctypes['float']:
             return Vector3r( self.x_val / other, self.y_val / other, self.z_val / other)
         else:
-            raise TypeError('unsupported operand type(s) for /: %s and %s' % ( str(type(self)), str(type(other))) )
+            raise TypeError(
+                f'unsupported operand type(s) for /: {str(type(self))} and {str(type(other))}'
+            )
 
     def __mul__(self, other):
         if type(other) in [int, float] + np.sctypes['int'] + np.sctypes['uint'] + np.sctypes['float']:
             return Vector3r(self.x_val*other, self.y_val*other, self.z_val*other)
         else:
-            raise TypeError('unsupported operand type(s) for *: %s and %s' % ( str(type(self)), str(type(other))) )
+            raise TypeError(
+                f'unsupported operand type(s) for *: {str(type(self))} and {str(type(other))}'
+            )
 
     def dot(self, other):
         if type(self) == type(other):
@@ -128,11 +132,10 @@ class Vector3r(MsgpackMixin):
             raise TypeError('unsupported operand type(s) for \'dot\': %s and %s' % ( str(type(self)), str(type(other))) )
 
     def cross(self, other):
-        if type(self) == type(other):
-            cross_product = np.cross(self.to_numpy_array(), other.to_numpy_array())
-            return Vector3r(cross_product[0], cross_product[1], cross_product[2])
-        else:
+        if type(self) != type(other):
             raise TypeError('unsupported operand type(s) for \'cross\': %s and %s' % ( str(type(self)), str(type(other))) )
+        cross_product = np.cross(self.to_numpy_array(), other.to_numpy_array())
+        return Vector3r(cross_product[0], cross_product[1], cross_product[2])
 
     def get_length(self):
         return ( self.x_val**2 + self.y_val**2 + self.z_val**2 )**0.5
@@ -172,18 +175,21 @@ class Quaternionr(MsgpackMixin):
         if type(self) == type(other):
             return Quaternionr( self.x_val+other.x_val, self.y_val+other.y_val, self.z_val+other.z_val, self.w_val+other.w_val )
         else:
-            raise TypeError('unsupported operand type(s) for +: %s and %s' % ( str(type(self)), str(type(other))) )
+            raise TypeError(
+                f'unsupported operand type(s) for +: {str(type(self))} and {str(type(other))}'
+            )
 
     def __mul__(self, other):
-        if type(self) == type(other):
-            t, x, y, z = self.w_val, self.x_val, self.y_val, self.z_val
-            a, b, c, d = other.w_val, other.x_val, other.y_val, other.z_val
-            return Quaternionr( w_val = a*t - b*x - c*y - d*z,
-                                x_val = b*t + a*x + d*y - c*z,
-                                y_val = c*t + a*y + b*z - d*x,
-                                z_val = d*t + z*a + c*x - b*y)
-        else:
-            raise TypeError('unsupported operand type(s) for *: %s and %s' % ( str(type(self)), str(type(other))) )
+        if type(self) != type(other):
+            raise TypeError(
+                f'unsupported operand type(s) for *: {str(type(self))} and {str(type(other))}'
+            )
+        t, x, y, z = self.w_val, self.x_val, self.y_val, self.z_val
+        a, b, c, d = other.w_val, other.x_val, other.y_val, other.z_val
+        return Quaternionr( w_val = a*t - b*x - c*y - d*z,
+                            x_val = b*t + a*x + d*y - c*z,
+                            y_val = c*t + a*y + b*z - d*x,
+                            z_val = d*t + z*a + c*x - b*y)
 
     def __truediv__(self, other):
         if type(other) == type(self):
@@ -191,7 +197,9 @@ class Quaternionr(MsgpackMixin):
         elif type(other) in [int, float] + np.sctypes['int'] + np.sctypes['uint'] + np.sctypes['float']:
             return Quaternionr( self.x_val / other, self.y_val / other, self.z_val / other, self.w_val / other)
         else:
-            raise TypeError('unsupported operand type(s) for /: %s and %s' % ( str(type(self)), str(type(other))) )
+            raise TypeError(
+                f'unsupported operand type(s) for /: {str(type(self))} and {str(type(other))}'
+            )
 
     def dot(self, other):
         if type(self) == type(other):
@@ -212,13 +220,12 @@ class Quaternionr(MsgpackMixin):
             raise TypeError('unsupported operand type(s) for \'outer_product\': %s and %s' % ( str(type(self)), str(type(other))) )
 
     def rotate(self, other):
-        if type(self) == type(other):
-            if other.get_length() == 1:
-                return other * self * other.inverse()
-            else:
-                raise ValueError('length of the other Quaternionr must be 1')
-        else:
+        if type(self) != type(other):
             raise TypeError('unsupported operand type(s) for \'rotate\': %s and %s' % ( str(type(self)), str(type(other))) )
+        if other.get_length() == 1:
+            return other * self * other.inverse()
+        else:
+            raise ValueError('length of the other Quaternionr must be 1')
 
     def conjugate(self):
         return Quaternionr(-self.x_val, -self.y_val, -self.z_val, self.w_val)
@@ -356,14 +363,14 @@ class CarControls(MsgpackMixin):
 
 
     def set_throttle(self, throttle_val, forward):
-        if (forward):
-            self.is_manual_gear = False
+        if forward:
             self.manual_gear = 0
             self.throttle = abs(throttle_val)
         else:
-            self.is_manual_gear = False
             self.manual_gear = -1
             self.throttle = - abs(throttle_val)
+
+        self.is_manual_gear = False
 
 class KinematicsState(MsgpackMixin):
     position = Vector3r()

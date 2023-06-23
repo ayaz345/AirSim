@@ -89,11 +89,7 @@ class AirSimCarEnv(AirSimEnv):
         return image
 
     def _compute_reward(self):
-        MAX_SPEED = 300
-        MIN_SPEED = 10
         THRESH_DIST = 3.5
-        BETA = 3
-
         pts = [
             np.array([x, y, 0])
             for x, y in [
@@ -118,7 +114,11 @@ class AirSimCarEnv(AirSimEnv):
         if dist > THRESH_DIST:
             reward = -3
         else:
+            BETA = 3
+
             reward_dist = math.exp(-BETA * dist) - 0.5
+            MAX_SPEED = 300
+            MIN_SPEED = 10
             reward_speed = (
                 (self.car_state.speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)
             ) - 0.5
@@ -127,8 +127,8 @@ class AirSimCarEnv(AirSimEnv):
         done = 0
         if reward < -1:
             done = 1
-        if self.car_controls.brake == 0:
-            if self.car_state.speed <= 1:
+        if self.car_state.speed <= 1:
+            if self.car_controls.brake == 0:
                 done = 1
         if self.state["collision"]:
             done = 1

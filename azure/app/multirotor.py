@@ -4,23 +4,23 @@ import pprint
 def print_state(client):
     state = client.getMultirotorState()
     s = pprint.pformat(state)
-    print("state: %s" % s)
+    print(f"state: {s}")
 
     imu_data = client.getImuData()
     s = pprint.pformat(imu_data)
-    print("imu_data: %s" % s)
+    print(f"imu_data: {s}")
 
     barometer_data = client.getBarometerData()
     s = pprint.pformat(barometer_data)
-    print("barometer_data: %s" % s)
+    print(f"barometer_data: {s}")
 
     magnetometer_data = client.getMagnetometerData()
     s = pprint.pformat(magnetometer_data)
-    print("magnetometer_data: %s" % s)
+    print(f"magnetometer_data: {s}")
 
     gps_data = client.getGpsData()
     s = pprint.pformat(gps_data)
-    print("gps_data: %s" % s)
+    print(f"gps_data: {s}")
 
 # connect to the AirSim simulator
 client = airsim.MultirotorClient()

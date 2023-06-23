@@ -27,16 +27,15 @@ def printUsage():
    print("Usage: python point_cloud.py [cloud.txt]")
    
 def savePointCloud(image, fileName):
-   f = open(fileName, "w")
-   for x in range(image.shape[0]):
-     for y in range(image.shape[1]):
-        pt = image[x,y]
-        if (math.isinf(pt[0]) or math.isnan(pt[0])):
-          # skip it
-          None
-        else: 
-          f.write("%f %f %f %s\n" % (pt[0], pt[1], pt[2]-1, rgb))
-   f.close()
+   with open(fileName, "w") as f:
+      for x in range(image.shape[0]):
+        for y in range(image.shape[1]):
+           pt = image[x,y]
+           if (math.isinf(pt[0]) or math.isnan(pt[0])):
+             # skip it
+             None
+           else: 
+             f.write("%f %f %f %s\n" % (pt[0], pt[1], pt[2]-1, rgb))
 
 for arg in sys.argv[1:]:
   cloud.txt = arg
@@ -44,20 +43,17 @@ for arg in sys.argv[1:]:
 client = airsim.MultirotorClient()
 
 while True:
-    rawImage = client.simGetImage("0", airsim.ImageType.DepthPerspective)
-    if (rawImage is None):
-        print("Camera is not returning image, please check airsim for error messages")
-        airsim.wait_key("Press any key to exit")
-        sys.exit(0)
-    else:
-        png = cv2.imdecode(np.frombuffer(rawImage, np.uint8) , cv2.IMREAD_UNCHANGED)
-        gray = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
-        Image3D = cv2.reprojectImageTo3D(gray, projectionMatrix)
-        savePointCloud(Image3D, outputFile)
-        print("saved " + outputFile)
-        airsim.wait_key("Press any key to exit")
-        sys.exit(0)
-
-    key = cv2.waitKey(1) & 0xFF;
-    if (key == 27 or key == ord('q') or key == ord('x')):
-        break;
+   rawImage = client.simGetImage("0", airsim.ImageType.DepthPerspective)
+   if (rawImage is None):
+      print("Camera is not returning image, please check airsim for error messages")
+   else:
+      png = cv2.imdecode(np.frombuffer(rawImage, np.uint8) , cv2.IMREAD_UNCHANGED)
+      gray = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
+      Image3D = cv2.reprojectImageTo3D(gray, projectionMatrix)
+      savePointCloud(Image3D, outputFile)
+      print(f"saved {outputFile}")
+   airsim.wait_key("Press any key to exit")
+   sys.exit(0)
+   key = cv2.waitKey(1) & 0xFF;
+   if key in [27, ord('q'), ord('x')]:
+      break;

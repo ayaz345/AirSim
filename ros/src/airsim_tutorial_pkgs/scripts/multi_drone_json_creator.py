@@ -46,8 +46,7 @@ class JSONSettingsCreator(object):
         if "Vehicles" not in self.data.keys():
             self.data['Vehicles'] = {}
 
-        self.data['Vehicles'][vehicle_name] = {}
-        self.data['Vehicles'][vehicle_name]["VehicleType"] = "SimpleFlight"
+        self.data['Vehicles'][vehicle_name] = {"VehicleType": "SimpleFlight"}
         self.set_pose(self.data['Vehicles'][vehicle_name], pose)
 
 def main():
@@ -55,7 +54,7 @@ def main():
     json_setting_helper.add_minimal()
 
     # arrange drones in a rectangle. todo make classes for different swarm spawn shapes? 
-    dist_between_drones = 2.0 
+    dist_between_drones = 2.0
     num_drones_x = 5
     num_drones_y = 5
     grid_width = (num_drones_x-1) * dist_between_drones
@@ -69,8 +68,17 @@ def main():
 
     for row_idx in range(x_grid.shape[0]):
         for col_idx in range(x_grid.shape[1]):
-            json_setting_helper.add_multirotor("Drone"+str((row_idx * num_drones_x) + col_idx), 
-                Pose(Position(x=y_grid[row_idx, col_idx], y=x_grid[row_idx, col_idx], z=0), Rotation(yaw=0, pitch=0, roll=0)))
+            json_setting_helper.add_multirotor(
+                f"Drone{str(row_idx * num_drones_x + col_idx)}",
+                Pose(
+                    Position(
+                        x=y_grid[row_idx, col_idx],
+                        y=x_grid[row_idx, col_idx],
+                        z=0,
+                    ),
+                    Rotation(yaw=0, pitch=0, roll=0),
+                ),
+            )
     with open("bla.json", "w") as f:
         json.dump(json_setting_helper.data, f, indent=2, sort_keys=True)
 

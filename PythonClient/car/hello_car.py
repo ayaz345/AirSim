@@ -10,11 +10,11 @@ import tempfile
 client = airsim.CarClient()
 client.confirmConnection()
 client.enableApiControl(True)
-print("API Control enabled: %s" % client.isApiControlEnabled())
+print(f"API Control enabled: {client.isApiControlEnabled()}")
 car_controls = airsim.CarControls()
 
 tmp_dir = os.path.join(tempfile.gettempdir(), "airsim_car")
-print ("Saving images to %s" % tmp_dir)
+print(f"Saving images to {tmp_dir}")
 try:
     os.makedirs(tmp_dir)
 except OSError:
@@ -71,15 +71,20 @@ for idx in range(3):
 
         if response.pixels_as_float:
             print("Type %d, size %d" % (response.image_type, len(response.image_data_float)))
-            airsim.write_pfm(os.path.normpath(filename + '.pfm'), airsim.get_pfm_array(response))
+            airsim.write_pfm(
+                os.path.normpath(f'{filename}.pfm'),
+                airsim.get_pfm_array(response),
+            )
         elif response.compress: #png format
             print("Type %d, size %d" % (response.image_type, len(response.image_data_uint8)))
-            airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)
+            airsim.write_file(
+                os.path.normpath(f'{filename}.png'), response.image_data_uint8
+            )
         else: #uncompressed array
             print("Type %d, size %d" % (response.image_type, len(response.image_data_uint8)))
             img1d = np.fromstring(response.image_data_uint8, dtype=np.uint8) # get numpy array
             img_rgb = img1d.reshape(response.height, response.width, 3) # reshape array to 3 channel image array H X W X 3
-            cv2.imwrite(os.path.normpath(filename + '.png'), img_rgb) # write to png
+            cv2.imwrite(os.path.normpath(f'{filename}.png'), img_rgb)
 
 #restore to original state
 client.reset()

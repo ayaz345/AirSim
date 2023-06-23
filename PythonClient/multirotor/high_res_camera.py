@@ -43,11 +43,9 @@ Settings used-
 
 client = airsim.VehicleClient()
 client.confirmConnection()
-framecounter = 1
-
 prevtimestamp = datetime.now()
 
-while(framecounter <= 500):
+for framecounter in range(1, 501):
     if framecounter%150 == 0:
         client.simGetImages([airsim.ImageRequest("high_res", airsim.ImageType.Scene, False, False)])
         print("High resolution image captured.")
@@ -58,4 +56,3 @@ while(framecounter <= 500):
         prevtimestamp = now
 
     client.simGetImages([airsim.ImageRequest("low_res", airsim.ImageType.Scene, False, False)])
-    framecounter += 1

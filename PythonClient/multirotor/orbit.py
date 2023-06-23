@@ -34,11 +34,11 @@ class OrbitNavigator:
 
         if len(center) != 2:
             raise Exception("Expecting '[x,y]' for the center direction vector")
-        
+
         # center is just a direction vector, so normalize it to compute the actual cx,cy locations.
         cx = float(center[0])
         cy = float(center[1])
-        length = math.sqrt((cx*cx) + (cy*cy))
+        length = math.sqrt(cx**2 + cy**2)
         cx /= length
         cy /= length
         cx *= self.radius
@@ -70,7 +70,7 @@ class OrbitNavigator:
     def start(self):
         print("arming the drone...")
         self.client.armDisarm(True)
-        
+
         # AirSim uses NED coordinates so negative axis is up.
         start = self.client.getMultirotorState().kinematics_estimated.position
         landed = self.client.getMultirotorState().landed_state
@@ -81,18 +81,18 @@ class OrbitNavigator:
             start = self.client.getMultirotorState().kinematics_estimated.position
             z = -self.altitude + self.home.z_val
         else:
-            print("already flying so we will orbit at current altitude {}".format(start.z_val))
+            print(f"already flying so we will orbit at current altitude {start.z_val}")
             z = start.z_val # use current altitude then
 
-        print("climbing to position: {},{},{}".format(start.x_val, start.y_val, z))
+        print(f"climbing to position: {start.x_val},{start.y_val},{z}")
         self.client.moveToPositionAsync(start.x_val, start.y_val, z, self.speed).join()
         self.z = z
-        
+
         print("ramping up to speed...")
         count = 0
         self.start_angle = None
         self.next_snapshot = None
-        
+
         # ramp up time
         ramptime = self.radius / 10
         self.start_time = time.time()        
@@ -109,7 +109,7 @@ class OrbitNavigator:
             elif ramptime > 0:
                 print("reached full speed...")
                 ramptime = 0
-                
+
             lookahead_angle = speed / self.radius            
 
             # compute current angle
@@ -130,8 +130,8 @@ class OrbitNavigator:
 
             if self.track_orbits(angle_to_center * 180 / math.pi):
                 count += 1
-                print("completed {} orbits".format(count))
-            
+                print(f"completed {count} orbits")
+
             self.camera_heading = camera_heading
             self.client.moveByVelocityZAsync(vx, vy, z, 1, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, camera_heading))
 
@@ -183,8 +183,8 @@ class OrbitNavigator:
         crossing = False
         self.previous_angle = angle
 
-        if self.snapshot_delta and angle > self.next_snapshot:            
-            print("Taking snapshot at angle {}".format(angle))
+        if self.snapshot_delta and angle > self.next_snapshot:        
+            print(f"Taking snapshot at angle {angle}")
             self.take_snapshot()
             self.next_snapshot += self.snapshot_delta
 
@@ -215,16 +215,16 @@ class OrbitNavigator:
             airsim.YawMode(False, self.camera_heading)).join()
         responses = self.client.simGetImages([airsim.ImageRequest(1, airsim.ImageType.Scene)]) #scene vision image in png format
         response = responses[0]
-        filename = "photo_" + str(self.snapshot_index)
+        filename = f"photo_{str(self.snapshot_index)}"
         self.snapshot_index += 1
-        airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)        
-        print("Saved snapshot: {}".format(filename))
+        airsim.write_file(
+            os.path.normpath(f'{filename}.png'), response.image_data_uint8
+        )
+        print(f"Saved snapshot: {filename}")
         self.start_time = time.time()  # cause smooth ramp up to happen again after photo is taken.
 
     def sign(self, s):
-        if s < 0: 
-            return -1
-        return 1
+        return -1 if s < 0 else 1
 
 if __name__ == "__main__":
     args = sys.argv

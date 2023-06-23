@@ -13,7 +13,7 @@ def generate_color_palette(numPixelsWide, outputFile):
     palette = numpy.zeros((1, 256 * numPixelsWide, 3))
     possibilities = [list(range(256)), list(range(256)), list(range(256))]
 
-    colors = [[0] * 3 for i in range(256)]
+    colors = [[0] * 3 for _ in range(256)]
 
     choice = 0
     j = 0
@@ -36,10 +36,9 @@ def generate_color_palette(numPixelsWide, outputFile):
 
     cv2.imwrite(outputFile, palette, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
-    rgb_file = open("rgbs.txt", "w")
-    for j in range(256):
-        rgb_file.write("%d\t%s\n" % (j, str(list(reversed(colors[j])))))
-    rgb_file.close()
+    with open("rgbs.txt", "w") as rgb_file:
+        for j in range(256):
+            rgb_file.write("%d\t%s\n" % (j, str(list(reversed(colors[j])))))
 
 
 if __name__ == "__main__":

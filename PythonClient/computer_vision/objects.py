@@ -1,7 +1,7 @@
 # In settings.json first activate computer vision mode: 
 # https://github.com/Microsoft/AirSim/blob/main/docs/image_apis.md#computer-vision-mode
 
-import setup_path 
+import setup_path
 import airsim
 
 import pprint
@@ -24,18 +24,21 @@ client.confirmConnection()
 
 # search object by name: 
 pose1 = client.simGetObjectPose("OrangeBall");
-print("OrangeBall - Position: %s, Orientation: %s" % (pprint.pformat(pose1.position),
-    pprint.pformat(pose1.orientation)))
+print(
+    f"OrangeBall - Position: {pprint.pformat(pose1.position)}, Orientation: {pprint.pformat(pose1.orientation)}"
+)
 
 # search another object by tag
 pose2 = client.simGetObjectPose("PulsingCone");
-print("PulsingCone - Position: %s, Orientation: %s" % (pprint.pformat(pose2.position),
-    pprint.pformat(pose2.orientation)))
+print(
+    f"PulsingCone - Position: {pprint.pformat(pose2.position)}, Orientation: {pprint.pformat(pose2.orientation)}"
+)
 
 # search non-existent object
-pose3 = client.simGetObjectPose("Non-Existent"); # should return nan pose
-print("Non-Existent - Position: %s, Orientation: %s" % (pprint.pformat(pose3.position),
-    pprint.pformat(pose3.orientation)))
+pose3 = client.simGetObjectPose("Non-Existent")
+print(
+    f"Non-Existent - Position: {pprint.pformat(pose3.position)}, Orientation: {pprint.pformat(pose3.orientation)}"
+)
 
 
 #------------------------------------ Set new pose ------------------------------------------------
@@ -51,22 +54,25 @@ success = client.simSetObjectPose("PulsingCone", pose2, False);
 airsim.wait_key("PulsingCone moved. Success: %i" % (success))
 
 # move non-existent object
-success = client.simSetObjectPose("Non-Existent", pose2); # should return nan pose
+success = client.simSetObjectPose("Non-Existent", pose2)
 airsim.wait_key("Non-Existent moved. Success: %i" % (success))
 
 #------------------------------------ Get new pose ------------------------------------------------
 
 
 pose1 = client.simGetObjectPose("OrangeBall");
-print("OrangeBall - Position: %s, Orientation: %s" % (pprint.pformat(pose1.position),
-    pprint.pformat(pose1.orientation)))
+print(
+    f"OrangeBall - Position: {pprint.pformat(pose1.position)}, Orientation: {pprint.pformat(pose1.orientation)}"
+)
 
 # search another object by tag
 pose2 = client.simGetObjectPose("PulsingCone");
-print("PulsingCone - Position: %s, Orientation: %s" % (pprint.pformat(pose2.position),
-    pprint.pformat(pose2.orientation)))
+print(
+    f"PulsingCone - Position: {pprint.pformat(pose2.position)}, Orientation: {pprint.pformat(pose2.orientation)}"
+)
 
 # search non-existent object
-pose3 = client.simGetObjectPose("Non-Existent"); # should return nan pose
-print("Non-Existent - Position: %s, Orientation: %s" % (pprint.pformat(pose3.position),
-    pprint.pformat(pose3.orientation)))
+pose3 = client.simGetObjectPose("Non-Existent")
+print(
+    f"Non-Existent - Position: {pprint.pformat(pose3.position)}, Orientation: {pprint.pformat(pose3.orientation)}"
+)

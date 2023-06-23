@@ -92,17 +92,15 @@ class WavReader:
 
     def get_requested_channels(self, data):
         if self.requested_channels > self.actual_channels:
-            raise Exception("Cannot add channels, actual is {}, requested is {}".format(
-                self.actual_channels, self.requested_channels))
+            raise Exception(
+                f"Cannot add channels, actual is {self.actual_channels}, requested is {self.requested_channels}"
+            )
 
         if self.requested_channels < self.actual_channels:
             data = np.frombuffer(data, dtype=np.int16)
-            channels = []
-            # split into separate channels
-            for i in range(self.actual_channels):
-                channels += [data[i::self.actual_channels]]
+            channels = [data[i::self.actual_channels] for i in range(self.actual_channels)]
             # drop the channels we don't want
-            channels = channels[0:self.requested_channels]
+            channels = channels[:self.requested_channels]
             # zip the resulting channels back up.
             data = np.array(list(zip(*channels))).flatten()
             # convert back to packed bytes in PCM 16 format
@@ -119,7 +117,7 @@ class WavReader:
         # deal with any accumulation of tails, if the tail grows to a full
         # buffer then return it!
         if self.tail is not None and len(self.tail) >= self.read_size:
-            data = self.tail[0:self.read_size]
+            data = self.tail[:self.read_size]
             self.tail = self.tail[self.read_size:]
             return data
 
@@ -140,7 +138,7 @@ class WavReader:
         if len(data) > self.read_size:
             # usually one byte extra so add this to our accumulating tail
             self.tail = data[self.read_size:]
-            data = data[0:self.read_size]
+            data = data[:self.read_size]
 
         if len(data) < self.read_size:
             # might have reached the end of a file, so pad with zeros.

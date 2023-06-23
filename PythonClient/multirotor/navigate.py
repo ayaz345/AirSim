@@ -1,6 +1,6 @@
 # use open cv to show new images from AirSim 
 
-import setup_path 
+import setup_path
 import airsim
 
 # requires Python 3.5.3 :: Anaconda 4.4.0
@@ -57,11 +57,11 @@ while True:
         if (current < 20):
             client.hoverAsync().join()
             airsim.wait_key("whoops - we are about to crash, so stopping!")
-    
+
         pitch, roll, yaw  = airsim.to_eularian_angles(client.simGetVehiclePose().orientation)
 
         if (distance > current + 30):
-        
+
             # we have a 90 degree field of view (pi/2), we've sliced that into 5 chunks, each chunk then represents
             # an angular delta of the following pi/10.
             change = 0
@@ -76,12 +76,12 @@ while True:
                 change = pi / 10
             else:
                 change = 2*pi/10
-    
+
             yaw = (yaw + change)
             vx = math.cos(yaw);
             vy = math.sin(yaw);
             print ("switching angle", math.degrees(yaw), vx, vy, min, distance, current)
-    
+
         if (vx == 0 and vy == 0):
             vx = math.cos(yaw);
             vy = math.sin(yaw);
@@ -94,5 +94,5 @@ while True:
         cv2.imshow("Top", png)
 
     key = cv2.waitKey(1) & 0xFF;
-    if (key == 27 or key == ord('q') or key == ord('x')):
+    if key in [27, ord('q'), ord('x')]:
         break;

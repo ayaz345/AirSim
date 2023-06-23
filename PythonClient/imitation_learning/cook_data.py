@@ -24,15 +24,6 @@ COOKED_DATA_DIR = './cooked_data/'
 # Choose The folders to search for data under RAW_DATA_DIR
 COOK_ALL_DATA = True  
 
-data_folders = []
-
-#if COOK_ALL_DATA is set to False, append your desired data folders here
-# data_folder.append('folder_name1')
-# data_folder.append('folder_name2')
-# ...
-if COOK_ALL_DATA:
-	data_folders = [name for name in os.listdir(RAW_DATA_DIR)]
-
-
+data_folders = list(os.listdir(RAW_DATA_DIR)) if COOK_ALL_DATA else []
 full_path_raw_folders = [os.path.join(RAW_DATA_DIR, f) for f in data_folders]
 Cooking.cook(full_path_raw_folders, COOKED_DATA_DIR, train_eval_test_split, chunk_size)

@@ -1,4 +1,4 @@
-import setup_path 
+import setup_path
 import airsim
 
 import time
@@ -10,7 +10,7 @@ client.enableApiControl(True)
 
 car_controls = airsim.CarControls()
 
-for i in range(1, 6):
+for _ in range(1, 6):
     print("Starting command")
     car_controls.throttle = 0.5
     car_controls.steering = 1

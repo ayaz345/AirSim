@@ -79,9 +79,6 @@ class AirSimDroneEnv(AirSimEnv):
         ).join()
 
     def _compute_reward(self):
-        thresh_dist = 7
-        beta = 1
-
         z = -10
         pts = [
             np.array([-0.55265, -31.9786, -19.0225]),
@@ -92,13 +89,11 @@ class AirSimDroneEnv(AirSimEnv):
         ]
 
         quad_pt = np.array(
-            list(
-                (
-                    self.state["position"].x_val,
-                    self.state["position"].y_val,
-                    self.state["position"].z_val,
-                )
-            )
+            [
+                self.state["position"].x_val,
+                self.state["position"].y_val,
+                self.state["position"].z_val,
+            ]
         )
 
         if self.state["collision"]:
@@ -112,9 +107,12 @@ class AirSimDroneEnv(AirSimEnv):
                     / np.linalg.norm(pts[i] - pts[i + 1]),
                 )
 
+            thresh_dist = 7
             if dist > thresh_dist:
                 reward = -10
             else:
+                beta = 1
+
                 reward_dist = math.exp(-beta * dist) - 0.5
                 reward_speed = (
                     np.linalg.norm(
@@ -128,10 +126,7 @@ class AirSimDroneEnv(AirSimEnv):
                 )
                 reward = reward_dist + reward_speed
 
-        done = 0
-        if reward <= -10:
-            done = 1
-
+        done = 1 if reward <= -10 else 0
         return reward, done
 
     def step(self, action):
@@ -147,18 +142,16 @@ class AirSimDroneEnv(AirSimEnv):
 
     def interpret_action(self, action):
         if action == 0:
-            quad_offset = (self.step_length, 0, 0)
+            return self.step_length, 0, 0
         elif action == 1:
-            quad_offset = (0, self.step_length, 0)
+            return 0, self.step_length, 0
         elif action == 2:
-            quad_offset = (0, 0, self.step_length)
+            return 0, 0, self.step_length
         elif action == 3:
-            quad_offset = (-self.step_length, 0, 0)
+            return -self.step_length, 0, 0
         elif action == 4:
-            quad_offset = (0, -self.step_length, 0)
+            return 0, -self.step_length, 0
         elif action == 5:
-            quad_offset = (0, 0, -self.step_length)
+            return 0, 0, -self.step_length
         else:
-            quad_offset = (0, 0, 0)
-
-        return quad_offset
+            return 0, 0, 0

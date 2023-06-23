@@ -71,15 +71,12 @@ class LidarTest:
             while True:
                 for lidar_name in lidar_names:
                     filename = f"{vehicle_name}_{lidar_name}_pointcloud.asc"
-                    if not existing_data_cleared:
-                        f = open(filename,'w')
-                    else:
-                        f = open(filename,'a')
+                    f = open(filename,'w') if not existing_data_cleared else open(filename,'a')
                     lidar_data = self.client.getLidarData(lidar_name=lidar_name,vehicle_name=vehicle_name)
 
                     for i in range(0, len(lidar_data.point_cloud), 3):
                         xyz = lidar_data.point_cloud[i:i+3]
-                        
+
                         f.write("%f %f %f %d %d %d \n" % (xyz[0],xyz[1],xyz[2],255,255,0))
                     f.close()
                 existing_data_cleared = True

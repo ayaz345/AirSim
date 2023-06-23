@@ -58,11 +58,7 @@ def runSingleCar(id: int):
 
 
 if __name__ == "__main__":
-    num_vehicles = 3
-
-    if len(sys.argv) == 2:
-        num_vehicles = int(sys.argv[1])
-
+    num_vehicles = int(sys.argv[1]) if len(sys.argv) == 2 else 3
     print(f"Creating {num_vehicles} vehicles")
 
     threads = []

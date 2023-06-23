@@ -27,11 +27,18 @@ def build_docker_image(args):
         if not args.target_image:
             args.target_image = 'airsim_binary' + ':' + target_image_tag
 
-    docker_command = ['docker', 'build', '--network=host', \
-                        '-t', args.target_image, \
-                        '-f',  dockerfile, \
-                        '--build-arg', 'BASE_IMAGE=' + args.base_image, \
-                        '.']
+    docker_command = [
+        'docker',
+        'build',
+        '--network=host',
+        '-t',
+        args.target_image,
+        '-f',
+        dockerfile,
+        '--build-arg',
+        f'BASE_IMAGE={args.base_image}',
+        '.',
+    ]
     print(" ".join(docker_command))
     subprocess.call(docker_command)
 

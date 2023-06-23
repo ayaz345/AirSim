@@ -1,4 +1,4 @@
-import setup_path 
+import setup_path
 import airsim
 import tempfile
 import os
@@ -28,7 +28,7 @@ responses = client.simGetImages(requests, vehicle_name=vehicle_name)
 print('Retrieved images: %d' % len(responses))
 
 tmp_dir = os.path.join(tempfile.gettempdir(), "airsim_drone")
-print ("Saving images to %s" % tmp_dir)
+print(f"Saving images to {tmp_dir}")
 try:
     os.makedirs(tmp_dir)
 except OSError:
@@ -40,7 +40,11 @@ for idx, response in enumerate(responses):
 
     if response.pixels_as_float:
         print("Type %d, size %d, pos %s" % (response.image_type, len(response.image_data_float), pprint.pformat(response.camera_position)))
-        airsim.write_pfm(os.path.normpath(filename + '.pfm'), airsim.get_pfm_array(response))
+        airsim.write_pfm(
+            os.path.normpath(f'{filename}.pfm'), airsim.get_pfm_array(response)
+        )
     else:
         print("Type %d, size %d, pos %s" % (response.image_type, len(response.image_data_uint8), pprint.pformat(response.camera_position)))
-        airsim.write_file(os.path.normpath(filename + '.png'), response.image_data_uint8)
+        airsim.write_file(
+            os.path.normpath(f'{filename}.png'), response.image_data_uint8
+        )

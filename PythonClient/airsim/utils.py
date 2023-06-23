@@ -68,8 +68,7 @@ def to_eularian_angles(q):
     t2 = +2.0 * (w*y - z*x)
     if (t2 > 1.0):
         t2 = 1
-    if (t2 < -1.0):
-        t2 = -1.0
+    t2 = max(t2, -1.0)
     pitch = math.asin(t2)
 
     # yaw (z-axis rotation)
@@ -126,44 +125,39 @@ def wait_key(message = ''):
     
 def read_pfm(file):
     """ Read a pfm file """
-    file = open(file, 'rb')
+    with open(file, 'rb') as file:
+        color = None
+        width = None
+        height = None
+        scale = None
+        endian = None
 
-    color = None
-    width = None
-    height = None
-    scale = None
-    endian = None
+        header = file.readline().rstrip()
+        header = str(bytes.decode(header, encoding='utf-8'))
+        if header == 'PF':
+            color = True
+        elif header == 'Pf':
+            color = False
+        else:
+            raise Exception('Not a PFM file.')
 
-    header = file.readline().rstrip()
-    header = str(bytes.decode(header, encoding='utf-8'))
-    if header == 'PF':
-        color = True
-    elif header == 'Pf':
-        color = False
-    else:
-        raise Exception('Not a PFM file.')
+        temp_str = str(bytes.decode(file.readline(), encoding='utf-8'))
+        if dim_match := re.match(r'^(\d+)\s(\d+)\s$', temp_str):
+            width, height = map(int, dim_match.groups())
+        else:
+            raise Exception('Malformed PFM header.')
 
-    temp_str = str(bytes.decode(file.readline(), encoding='utf-8'))
-    dim_match = re.match(r'^(\d+)\s(\d+)\s$', temp_str)
-    if dim_match:
-        width, height = map(int, dim_match.groups())
-    else:
-        raise Exception('Malformed PFM header.')
+        scale = float(file.readline().rstrip())
+        if scale < 0: # little-endian
+            endian = '<'
+            scale = -scale
+        else:
+            endian = '>' # big-endian
 
-    scale = float(file.readline().rstrip())
-    if scale < 0: # little-endian
-        endian = '<'
-        scale = -scale
-    else:
-        endian = '>' # big-endian
+        data = np.fromfile(file, f'{endian}f')
+        shape = (height, width, 3) if color else (height, width)
 
-    data = np.fromfile(file, endian + 'f')
-    shape = (height, width, 3) if color else (height, width)
-
-    data = np.reshape(data, shape)
-    # DEY: I don't know why this was there.
-    file.close()
-    
+        data = np.reshape(data, shape)
     return data, scale
 
     

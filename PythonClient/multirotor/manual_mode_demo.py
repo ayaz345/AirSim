@@ -1,7 +1,8 @@
 """
 For connecting to the AirSim drone environment and testing API functionality
 """
-import setup_path 
+
+import setup_path
 import airsim
 
 import os
@@ -16,7 +17,7 @@ client.armDisarm(True)
 
 state = client.getMultirotorState()
 s = pprint.pformat(state)
-print("state: %s" % s)
+print(f"state: {s}")
 
 client.moveByManualAsync(vx_max = 1E6, vy_max = 1E6, z_min = -1E6, duration = 1E10)
 airsim.wait_key('Manual mode is setup. Press any key to send RC data to takeoff')

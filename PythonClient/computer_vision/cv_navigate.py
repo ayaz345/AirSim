@@ -120,8 +120,7 @@ def compute_bb(image_sz, obj_sz, hfov, distance):
 #convert horizonal fov to vertical fov
 def hfov2vfov(hfov, image_sz):
     aspect = image_sz[0]/image_sz[1]
-    vfov = 2*math.atan( tan(hfov/2) * aspect)
-    return vfov
+    return 2*math.atan( tan(hfov/2) * aspect)
 
 #matrix with all ones
 def equal_weight_mtx(roi_h,roi_w):
@@ -191,8 +190,7 @@ moveUAV(client,pos,yaw)
 #predictControl = AvoidLeftIgonreGoal(hfov, coll_thres, yaw, limit_yaw, step)
 predictControl = AvoidLeft(hfov, coll_thres, yaw, limit_yaw, step)
 
-for z in range(10000): # do few times
-    
+for _ in range(10000):
     #time.sleep(1)
 
     # get response
@@ -205,7 +203,7 @@ for z in range(10000): # do few times
 
     # reshape array to 2D array H X W
     img2d = np.reshape(img1d,(response.height, response.width)) 
-    
+
     [pos,yaw,target_dist] = predictControl.get_next_vec(img2d, uav_size, goal, pos)
     moveUAV(client,pos,yaw)
 
@@ -213,13 +211,6 @@ for z in range(10000): # do few times
         print('Target reached.')
         airsim.wait_key('Press any key to continue')
         break
-
-    # write to png 
-    #imsave(os.path.normpath(os.path.join(tmp_dir, "depth_" + str(z) + '.png')), generate_depth_viz(img2d,5))
-
-    #pose = client.simGetPose()
-    #pp.pprint(pose)
-    #time.sleep(5)
 
 # currently reset() doesn't work in CV mode. Below is the workaround
 client.simSetVehiclePose(airsim.Pose(airsim.Vector3r(0, 0, 0), airsim.to_quaternion(0, 0, 0)), True)

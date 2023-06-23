@@ -63,10 +63,10 @@ def esim(
         if spike_nums > 0:
             spikes[x] = pol
 
-        spike_nums = max_spikes if spike_nums > max_spikes else spike_nums
+        spike_nums = min(spike_nums, max_spikes)
 
         current_time = last_time
-        for i in range(spike_nums):
+        for _ in range(spike_nums):
             output_events[count].x = x % n_pix_row
             output_events[count].y = x // n_pix_row
             output_events[count].timestamp = np.round(current_time * 1e-6, 6)

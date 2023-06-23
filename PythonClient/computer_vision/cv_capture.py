@@ -1,7 +1,7 @@
 # In settings.json first activate computer vision mode: 
 # https://github.com/Microsoft/AirSim/blob/main/docs/image_apis.md#computer-vision-mode
 
-import setup_path 
+import setup_path
 import airsim
 
 import pprint
@@ -20,7 +20,7 @@ for camera_id in range(2):
 
 airsim.wait_key('Press any key to get images')
 tmp_dir = os.path.join(tempfile.gettempdir(), "airsim_drone")
-print ("Saving images to %s" % tmp_dir)
+print(f"Saving images to {tmp_dir}")
 try:
     for n in range(3):
         os.makedirs(os.path.join(tmp_dir, str(n)))
@@ -41,10 +41,20 @@ for x in range(50): # do few times
     for i, response in enumerate(responses):
         if response.pixels_as_float:
             print("Type %d, size %d, pos %s" % (response.image_type, len(response.image_data_float), pprint.pformat(response.camera_position)))
-            airsim.write_pfm(os.path.normpath(os.path.join(tmp_dir, str(x) + "_" + str(i) + '.pfm')), airsim.get_pfm_array(response))
+            airsim.write_pfm(
+                os.path.normpath(
+                    os.path.join(tmp_dir, f"{str(x)}_{str(i)}.pfm")
+                ),
+                airsim.get_pfm_array(response),
+            )
         else:
             print("Type %d, size %d, pos %s" % (response.image_type, len(response.image_data_uint8), pprint.pformat(response.camera_position)))
-            airsim.write_file(os.path.normpath(os.path.join(tmp_dir, str(i), str(x) + "_" + str(i) + '.png')), response.image_data_uint8)
+            airsim.write_file(
+                os.path.normpath(
+                    os.path.join(tmp_dir, str(i), f"{str(x)}_{str(i)}.png")
+                ),
+                response.image_data_uint8,
+            )
 
     pose = client.simGetVehiclePose()
     pp.pprint(pose)

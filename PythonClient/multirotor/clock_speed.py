@@ -20,10 +20,10 @@ duration = 3
 client.moveByVelocityZAsync(vx, vy, z, duration).join()
 
 
+vx = vy = 5
+z = -20
+duration = 5
 while True:
-    vx = vy = 5
-    z = -20
-    duration = 5
     # with ClockSpeed = 0.5 you will see that this takes 10s (system time)
     #and not 5s in each iteration
     client.moveByVelocityZAsync(vx, vy, z, duration).join()
